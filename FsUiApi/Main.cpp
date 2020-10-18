@@ -1,22 +1,22 @@
 #include <iostream>
-#include <WinSock2.h>
-#include <WS2tcpip.h>
-#include <Windows.h>
-#include <FSUIPC_User.h>
-#include <httplib.h>
+#include "FsInterface.h"
+#include "RestServer.h";
 
 using namespace std;
 
 int main(int argc, char **argv) {
-	DWORD dwResult;
-	BOOL done;
+	FsInterface fs;
 
-	done = FSUIPC_Open(SIM_ANY, &dwResult);
-	if (done) {
-		cout << "Successfully connected to FS, version: " << FSUIPC_FS_Version << endl;
+	if (fs.isConnected()) {
+		cout << "Successfully connected to " << fs.getFsVersion() << "!!!" << endl;
+		cout << "FSUIPC version " << fs.getUiVersion() << endl;
+		cout << "Library version " << fs.getLibVersion() << endl;
+
+		RestServer srv(&fs, 9999);
 	}
 	else {
-		cout << "Error connecting FS: " << dwResult << endl;
+		cout << "Connection to FS failed, error code " << fs.getErrorCode() << endl;
 	}
+
 	return 0;
 }
