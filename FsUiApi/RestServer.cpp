@@ -8,7 +8,7 @@ RestServer::RestServer(FsInterface *fs, int port)
 {
 	this->fs = fs;
 
-	srv.Get("/status", [this](const Request& req, Response& res) {
+	srv.Get("/status", [&](const Request& req, Response& res) {
 		string result = this->getStatus();
 		res.set_content(result, "application/json");
 	});
@@ -25,7 +25,14 @@ RestServer::~RestServer()
 
 string RestServer::getStatus()
 {
-	string statusJson = "{\"connected\":" + fs->isConnected();
-	statusJson += "}";
+	string statusJson = "{\"connected\":";
+	statusJson += fs->isConnected() ? "true" : "false";
+	statusJson += ",\"fs_version\":\"";
+	statusJson += fs->getFsVersion();
+	statusJson += "\",\"fsuipc_version\":\"";
+	statusJson += fs->getUiVersion();
+	statusJson += "\",\"lib_version\":\"";
+	statusJson += fs->getLibVersion();
+	statusJson += "\"}";
 	return statusJson;
 }
