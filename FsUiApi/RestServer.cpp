@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 #include "RestServer.h"
 
 using namespace std;
@@ -10,7 +11,26 @@ RestServer::RestServer(FsInterface *fs, int port)
 
 	srv.Get("/status", [&](const Request& req, Response& res) {
 		string result = this->getStatus();
-		res.set_content(result, "application/json");
+		res.set_content(result, JSON);
+	});
+
+	srv.Get("/raw", [&](const Request& req, Response& res) {
+		if (!req.has_param("type")) {
+			res.set_content("Missing param 'type'", TEXT);
+			return;
+		}
+
+		if (!req.has_param("offset")) {
+			res.set_content("Missing param 'offset'", TEXT);
+			return;
+		}
+
+		int t = atoi(req.get_param_value("type").c_str());
+		int o = atoi(req.get_param_value("offset").c_str());
+
+		string result = this->getRaw(t, o);
+
+		res.set_content(result, TEXT);
 	});
 
 	cout << "Start server listening on port " << port << endl;
@@ -20,6 +40,7 @@ RestServer::RestServer(FsInterface *fs, int port)
 
 RestServer::~RestServer()
 {
+	delete fs;
 }
 
 
@@ -35,4 +56,8 @@ string RestServer::getStatus()
 	statusJson += fs->getLibVersion();
 	statusJson += "\"}";
 	return statusJson;
+}
+
+string RestServer::getRaw(int t, int o) {
+	return fs->getRawValue((DataType)t, o);
 }

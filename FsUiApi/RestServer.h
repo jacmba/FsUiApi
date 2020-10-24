@@ -3,6 +3,9 @@
 #include <httplib.h>
 #include <string>
 
+#define JSON "application/json"
+#define TEXT "text/plain"
+
 class RestServer
 {
 public:
@@ -13,5 +16,6 @@ private:
 	httplib::Server srv;
 public:
 	std::string getStatus();
+	std::string getRaw(int t, int o);
 };
 

@@ -80,6 +80,49 @@ void FsInterface::connect()
 	libVersion = parseVersion(FSUIPC_Lib_Version);
 }
 
+string FsInterface::getRawValue(DataType t, int offset) {
+	char result[256];
+	DWORD dwResult;
+	BOOL success;
+
+	switch (t)
+	{
+	case TU8:
+		U8 u8;
+		success = FSUIPC_Read(offset, sizeof(U8), &u8, &dwResult);
+		if (!success) {
+			throw dwResult;
+		}
+		FSUIPC_Process(&dwResult);
+		if (dwResult > 0) {
+			throw dwResult;
+		}
+		sprintf(result, "%d", u8);
+		break;
+	case TU16:
+		break;
+	case TU32:
+		break;
+	case TS8:
+		break;
+	case TS16:
+		break;
+	case TS64:
+		break;
+	case TFLT32:
+		break;
+	case TFLT64:
+		break;
+	case TASCIIZ:
+		break;
+	default:
+		success = FALSE;
+		break;
+	}
+
+	return result;
+}
+
 
 long FsInterface::getErrorCode()
 {
