@@ -43,6 +43,7 @@ public:
 	std::string getUiVersion();
 	std::string getLibVersion();
 	std::string getRawValue(DataType t, int offset);
+	U8 getU8(int offset);
 	void connect();
 	long getErrorCode();
 };

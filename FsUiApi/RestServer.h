@@ -17,5 +17,6 @@ private:
 public:
 	std::string getStatus();
 	std::string getRaw(int t, int o);
+	U8 getU8(int o);
 };
 

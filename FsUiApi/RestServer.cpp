@@ -33,6 +33,19 @@ RestServer::RestServer(FsInterface *fs, int port)
 		res.set_content(result, TEXT);
 	});
 
+	srv.Get("/u8", [&](const Request& req, Response& res) {
+		if (!req.has_param("offset")) {
+			res.set_content("Missing param 'offset'", TEXT);
+			return;
+		}
+
+		int o = atoi(req.get_param_value("offset").c_str());
+		U8 u8 = this->getU8(o);
+		char result[4];
+		sprintf(result, "%d", u8);
+		res.set_content(result, TEXT);
+	});
+
 	cout << "Start server listening on port " << port << endl;
 	srv.listen("0.0.0.0", port);
 }
@@ -60,4 +73,8 @@ string RestServer::getStatus()
 
 string RestServer::getRaw(int t, int o) {
 	return fs->getRawValue((DataType)t, o);
+}
+
+U8 RestServer::getU8(int o) {
+	return fs->getU8(o);
 }
