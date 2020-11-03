@@ -87,12 +87,16 @@ string FsInterface::getRawValue(DataType t, int offset) {
 
 	switch (t)
 	{
-	case TU8:
+	case TU8: {
 		U8 u8 = getU8(offset);
 		sprintf(result, "%d", u8);
 		break;
-	case TU16:
+	}
+	case TU16: {
+		U16 u16 = getU16(offset);
+		sprintf(result, "%d", u16);
 		break;
+	}
 	case TU32:
 		break;
 	case TS8:
@@ -121,6 +125,23 @@ U8 FsInterface::getU8(int offset) {
 	BOOL success;
 
 	success = FSUIPC_Read(offset, sizeof(U8), &result, &dwResult);
+	if (!success) {
+		throw dwResult;
+	}
+	FSUIPC_Process(&dwResult);
+	if (dwResult > 0) {
+		throw dwResult;
+	}
+
+	return result;
+}
+
+U16 FsInterface::getU16(int offset) {
+	U16 result;
+	DWORD dwResult;
+	BOOL success;
+
+	success = FSUIPC_Read(offset, sizeof(U16), &result, &dwResult);
 	if (!success) {
 		throw dwResult;
 	}
